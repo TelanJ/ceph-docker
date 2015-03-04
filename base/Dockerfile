@@ -9,6 +9,9 @@ ENV CEPH_VERSION firefly
 ENV ETCDCTL_VERSION v2.0.4
 ENV ETCDCTL_ARCH linux-amd64
 
+ENV CONFD_VERSION 0.7.1
+ENV CONFD_ARCH linux-amd64
+
 # Install prerequisites
 RUN apt-get update
 RUN apt-get install -y wget
@@ -23,6 +26,10 @@ RUN apt-get install -y --force-yes ceph
 RUN wget -q -O- "https://github.com/coreos/etcd/releases/download/${ETCDCTL_VERSION}/etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}.tar.gz" |tar xfz - -C/tmp/ etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}/etcdctl
 RUN mv /tmp/etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}/etcdctl /usr/local/bin/etcdctl
 
+# Install confd
+ADD https://github.com/kelseyhightower/confd/releases/download/v${CONFD_VERSION}/confd-${CONFD_VERSION}-${CONFD_ARCH} /usr/local/bin/confd
+RUN chmod +x /usr/local/bin/confd
+RUN mkdir -p /etc/confd/{conf.d,templates}
+
 ADD entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-
