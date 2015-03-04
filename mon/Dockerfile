@@ -1,5 +1,5 @@
 # DOCKER-VERSION 1.0.0
-# 
+#
 # Ceph monitor
 #
 #  USAGE NOTES:
@@ -34,6 +34,11 @@ VOLUME ["/etc/ceph","/var/lib/ceph"]
 
 # Expose the ceph monitor port (6789, by default)
 EXPOSE 6789
+
+# Copy confd templates
+ADD ./templates/* /etc/conf.d/templates/
+ADD ./conf.d/* /etc/conf.d/conf.d/
+
 
 # Execute monitor as the entrypoint
 ENTRYPOINT ["/entrypoint.sh"]

@@ -1,0 +1,68 @@
+[global]
+fsid = {{getv "/ceph/global/fsid"}}
+mon initial members = {{getv "/ceph/monSetupLock"}}
+<!-- mon host = {{range $index, $mon := ls "/ceph/global/hosts"}}{{if $index}}, {{ end }}{{$mon.Key}}{{end}}
+mon addr = {{range $index, $mon := ls "/ceph/global/hosts"}}{{if $index}}, {{ end }}{{$mon.Key}}:6789{{end}} -->
+auth cluster required = cephx
+auth service required = cephx
+auth client required = cephx
+osd pool default size = {{getv "/ceph/global/osd_pool_default_size"}}
+osd pool default min size = {{getv "/ceph/global/osd_pool_default_min_size"}}
+osd pool default pg num = {{getv "/ceph/global/osd_pool_default_min_pg_num"}}
+osd pool default pgp num = {{getv "/ceph/global/osd_pool_default_min_pgp_num"}}
+osd pool default crush rule = {{getv "/ceph/global/osd_pool_default_crush_rule" }}
+osd recovery delay start = {{getv "/ceph/global/osd_recovery_delay_start"}}
+log file = /dev/stdout
+
+[client]
+  rbd cache = true
+  rbd cache writethrough until flush = true
+  admin socket = /var/run/ceph/$cluster-$type.$id.$pid.$cctid.asok
+
+[mon]
+  mon osd down out interval = {{getv "/ceph/mon/mon_osd_down_out_interval" }}
+  mon osd min down reporters = {{getv "/ceph/mon/mon_osd_min_down_reporters" }}
+
+<!-- {% for host in groups['mons'] %}
+  {% if hostvars[host]['ansible_hostname'] is defined %}
+  [mon.{{ hostvars[host]['ansible_hostname'] }}]
+    host = {{ hostvars[host]['ansible_hostname'] }}
+    mon addr = {{ hostvars[host]['ansible_' + monitor_interface]['ipv4']['address'] }}
+  {% endif %}
+{% endfor %} -->
+
+[osd]
+  osd mkfs type = {{getv "/ceph/osd/osd_mkfs_type" }}
+  osd mkfs options xfs = {{getv "/ceph/osd/osd_mkfs_options_xfs" }}
+  osd mount options xfs = {{getv "/ceph/osd/osd_mount_options_xfs" }}
+  osd journal size = {{getv "/ceph/osd/osd_journal_size" }}
+<!-- {{if cluster_network is defined }}
+  cluster_network = {{getv "/ceph/osd/cluster_network" }}
+{{end}}
+{{ if public_network is defined }}
+  public_network = {{getv "/ceph/osd/public_network" }}
+{{end}} -->
+  osd mon heartbeat interval = {{getv "/ceph/osd/osd_mon_heartbeat_interval" }}
+  # Performance tuning
+  filestore merge threshold = {{getv "/ceph/osd/filestore_merge_threshold" }}
+  filestore split multiple = {{getv "/ceph/osd/filestore_split_multiple" }}
+  osd op threads = {{getv "/ceph/osd/osd_op_threads" }}
+  filestore op threads = {{getv "/ceph/osd/filestore_op_threads" }}
+  filestore max sync interval = {{getv "/ceph/osd/filestore_max_sync_interval" }}
+  osd max scrubs = {{getv "/ceph/osd/osd_max_scrubs" }}
+  # Recovery tuning
+  osd recovery max active = {{getv "/ceph/osd/osd_recovery_max_active" }}
+  osd max backfills = {{getv "/ceph/osd/osd_max_backfills" }}
+  osd recovery op priority = {{getv "/ceph/osd/osd_recovery_op_priority" }}
+  osd recovery max chunk = {{getv "/ceph/osd/osd_recovery_max_chunk" }}
+  osd recovery threads = {{getv "/ceph/osd/osd_recovery_threads" }}
+  osd objectstore = {{getv "/ceph/osd/osd_objectstore" }}
+  osd crush update on start = {{getv "/ceph/osd/osd_crush_update_on_start" }}
+
+
+
+[client.radosgw.gateway]
+  host = rados-gateway
+  keyring = /etc/ceph/ceph.client.radosgw.keyring
+  keyring = /etc/ceph/radosgw.gateway.keyring
+  rgw socket path = /tmp/radosgw.sock
