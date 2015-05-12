@@ -25,7 +25,7 @@ if [ -e /etc/ceph/ceph.conf ]; then
 fi
  
 # Acquire lock to not run into race conditions with parallel bootstraps
-until consuloretcd put -${kv_type} ${CLUSTER_PATH}/lock $MON_NAME > /dev/null 2>&1 ; do
+until consuloretcd CAS -${kv_type} ${CLUSTER_PATH}/lock $MON_NAME > /dev/null 2>&1 ; do
   echo "Configuration is locked by another host. Waiting."
   sleep 1
 done
