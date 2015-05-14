@@ -5,7 +5,7 @@
 FROM ubuntu:14.04
 MAINTAINER Sébastien Han "seb@redhat.com"
 
-ENV CEPH_VERSION firefly
+ENV CEPH_VERSION hammer
 ENV CONSULORETCD_VERSION v0.2
 
 ENV CONFD_VERSION 0.7.1
@@ -23,8 +23,8 @@ RUN apt-get install -y --force-yes ceph
 
 
 #install consuloretcd-kv
-RUN wget -q -O- "https://github.com/AcalephStorage/consuloretcd-kv/releases/download/v0.2/consuloretcd-kv-${CONSULORETCD_VERSION}-05-14-2015.tar" |tar xfz - -C/tmp/consuloretcd-${CONSULORETCD_VERSION}/consuloretcd
-RUN mv /tmp/consuloretcd-${CONSULORETCD_VERSION}/consuloretcd /usr/local/bin/consuloretcd
+RUN wget -q -O- "https://github.com/AcalephStorage/consuloretcd-kv/releases/download/v0.2/consuloretcd-kv-${CONSULORETCD_VERSION}-05-14-2015.tar" |tar xfz - -C/tmp/vagrant/consuloretcd
+RUN mv /tmp/vagrant/consuloretcd /usr/local/bin/consuloretcd
 
 
 # Install confd
