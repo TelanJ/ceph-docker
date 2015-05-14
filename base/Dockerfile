@@ -23,7 +23,7 @@ RUN apt-get install -y --force-yes ceph
 
 
 #install consuloretcd-kv
-RUN wget -q -O- "https://github.com/TelanJ/consuloretcd-kv/releases/download/v0.2/consuloretcd-kv-${CONSULORETCD_VERSION}-05-14-2015.tar" |tar xfz - -C/tmp/consuloretcd-${CONSULORETCD_VERSION}/consuloretcd
+RUN wget -q -O- "https://github.com/AcalephStorage/consuloretcd-kv/releases/download/v0.2/consuloretcd-kv-${CONSULORETCD_VERSION}-05-14-2015.tar" |tar xfz - -C/tmp/consuloretcd-${CONSULORETCD_VERSION}/consuloretcd
 RUN mv /tmp/consuloretcd-${CONSULORETCD_VERSION}/consuloretcd /usr/local/bin/consuloretcd
 
 
