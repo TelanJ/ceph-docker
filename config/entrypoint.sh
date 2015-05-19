@@ -11,19 +11,22 @@ if [ ! -n "$MON_IP" ]; then
   exit 1
 fi
 
-if [ ! -n "$ETCDCTL_PEERS" ]; then
-  echo >&2 "ERROR: ETCDCTL_PEERS must be defined"
+if [ ! -n "$kv_type" ]; then
+  echo >&2 "ERROR: kv_type must be defined"
   exit 1
 fi
  
 CLUSTER=${CLUSTER:-ceph}
-CLUSTER_PATH=/ceph-config/$CLUSTER
+CLUSTER_PATH=ceph-config/$CLUSTER
 
 if [ -e /etc/ceph/ceph.conf ]; then
   echo "Found existing config. Done."
   exit 0
 fi
- 
+
+sudo cp /config/ceph.conf.tmpl /etc/confd/templates/
+sudo cp /config/ceph.conf.toml /etc/confd/conf.d/
+
 # Acquire lock to not run into race conditions with parallel bootstraps
 until consuloretcd CAS -${kv_type} ${CLUSTER_PATH}/lock $MON_NAME > /dev/null 2>&1 ; do
   echo "Configuration is locked by another host. Waiting."
@@ -41,23 +44,20 @@ if consuloretcd get -${kv_type} ${CLUSTER_PATH}/done > /dev/null 2>%1 ; then
 else 
   echo "No configuration found for cluster ${CLUSTER}. Generating."
 
-  fsid=$(uuidgen)
-  cat <<ENDHERE >/etc/ceph/ceph.conf
-fsid = $fsid
-mon initial members = ${MON_NAME}
-mon host = ${MON_IP}
-auth cluster required = cephx
-auth service required = cephx
-auth client required = cephx
-ENDHERE
+  export fsid=$(uuidgen)
+  confd -onetime -backend consul -node 192.168.200.90:8500
 
   ceph-authtool /etc/ceph/ceph.client.admin.keyring --create-keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow'
   ceph-authtool /etc/ceph/ceph.mon.keyring --create-keyring --gen-key -n mon. --cap mon 'allow *'
   monmaptool --create --add ${MON_NAME} ${MON_IP} --fsid ${fsid}  /etc/ceph/monmap
 
-  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.conf < /etc/ceph/ceph.conf > /dev/null
-  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.mon.keyring < /etc/ceph/ceph.mon.keyring > /dev/null
-  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.client.admin.keyring < /etc/ceph/ceph.client.admin.keyring > /dev/null
+  export CEPHCONF=$(cat /etc/ceph/ceph.conf)
+  export MONKEY=$(cat /etc/ceph/ceph.mon.keyring)
+  export ADKEY=$(cat /etc/ceph/ceph.client.admin.keyring)
+
+  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.conf "$CEPHCONF"
+  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.mon.keyring "$MONKEY"
+  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.client.admin.keyring "$ADKEY"
     
   echo "completed initialization for ${MON_NAME}"
   consuloretcd put -${kv_type} ${CLUSTER_PATH}/done true > /dev/null 2>&1
