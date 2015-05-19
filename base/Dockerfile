@@ -5,7 +5,7 @@
 FROM ubuntu:14.04
 MAINTAINER Sébastien Han "seb@redhat.com"
 
-ENV CEPH_VERSION firefly
+ENV CEPH_VERSION hammer
 ENV CONSULORETCD_VERSION v0.3
 
 ENV CONFD_VERSION 0.7.1
