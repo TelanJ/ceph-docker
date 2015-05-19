@@ -14,7 +14,6 @@ ENV CONFD_ARCH linux-amd64
 # Install prerequisites
 RUN apt-get update
 RUN apt-get install -y wget
-RUN apt-get install -y golang
 RUN apt-get install -y unzip
 
 
