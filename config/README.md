@@ -16,7 +16,7 @@ The following strategy is applied:
 
 To bootstrap a new cluster run:
 
-`docker run -e ETCDCTL_PEERS=http://192.168.101.50:4001 -e MON_IP=192.168.101.50 -e MON_NAME=mymon -e CLUSTER=testing -v /etc/ceph:/etc/ceph ceph/config`
+`docker run -e kv_type=consul -e MON_IP=192.168.101.50 -e MON_NAME=mymon -e CLUSTER=testing -v /etc/ceph:/etc/ceph -v /path/to/ceph-docker/config/templates:/config ceph/config`
 
 This will generate:
 
@@ -42,4 +42,4 @@ The following environment variables can be used to configure the bootstrapping:
 Mandatory Configuration:
   * `MON_NAME` is the name of the monitor. Usually the short hostname
   * `MON_IP` is the IP address of the monitor (public)
-  * `ETCDCTL_PEERS` is a comma seperated list of etcd peers (e.g. http://192.168.2.4:4001)
+  * `kv_type` is the backend to be used in connecting to the KV store (i.e. consul, etcd)
