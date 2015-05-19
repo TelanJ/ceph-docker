@@ -11,6 +11,11 @@ if [ ! -n "$MON_IP" ]; then
   exit 1
 fi
 
+if [ ! -n "$CONFD_IP" ]; then
+  echo >&2 "ERROR: CONFD_IP must be defined as the IP address of the CONFD"
+  exit 1
+fi
+
 if [ ! -n "$kv_type" ]; then
   echo >&2 "ERROR: kv_type must be defined"
   exit 1
@@ -45,7 +50,7 @@ else
   echo "No configuration found for cluster ${CLUSTER}. Generating."
 
   export fsid=$(uuidgen)
-  confd -onetime -backend consul -node 192.168.200.90:8500
+  confd -onetime -backend consul -node ${CONFD_IP}:8500
 
   ceph-authtool /etc/ceph/ceph.client.admin.keyring --create-keyring --gen-key -n client.admin --set-uid=0 --cap mon 'allow *' --cap osd 'allow *' --cap mds 'allow'
   ceph-authtool /etc/ceph/ceph.mon.keyring --create-keyring --gen-key -n mon. --cap mon 'allow *'
