@@ -29,16 +29,18 @@ fi
 CLUSTER=${CLUSTER:-ceph}
 CLUSTER_PATH=ceph-config/$CLUSTER
 
+consuloretcd -A ${CONFD_IP} CAS -${kv_type} mon_host/${MON_NAME} ${MON_IP}
+
 if [ -e /etc/ceph/ceph.conf ]; then
-  echo "Found existing config. Done."
-  exit 0
+  echo "Found existing config. Syncing"
+  confd -onetime -backend ${CONFD_BACKEND} -node ${CONFD_IP}:8500
 fi
 
 sudo cp /config/ceph.conf.tmpl /etc/confd/templates/
 sudo cp /config/ceph.conf.toml /etc/confd/conf.d/
 
 # Acquire lock to not run into race conditions with parallel bootstraps
-until consuloretcd CAS -${kv_type} ${CLUSTER_PATH}/lock $MON_NAME > /dev/null 2>&1 ; do
+until consuloretcd -A ${CONFD_IP} CAS -${kv_type} ${CLUSTER_PATH}/lock $MON_NAME > /dev/null 2>&1 ; do
   echo "Configuration is locked by another host. Waiting."
   sleep 1
 done
