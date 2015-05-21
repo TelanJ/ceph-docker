@@ -2,16 +2,8 @@
 #populate the KV store with ceph.conf parameters
 
 
-#mon hosts
-#monitor
-consuloretcd put -c mon_host/host1 192.168.42.20:6789
-consuloretcd put -c mon_host/host2 192.168.42.21:6789
-consuloretcd put -c mon_host/host3 192.168.42.22:6789
-consuloretcd put -c mon_host/host4 192.168.42.23:6789
-consuloretcd put -c mon_host/host5 192.168.42.24:6789
 
 #ceph-common
-consuloretcd put -c common/fsid 4a158d27-f750-41d5-9e7f-26ce4c9d2d45
 consuloretcd put -c common/cephx true
 consuloretcd put -c common/cephx_require_signatures false
 consuloretcd put -c common/cephx_cluster_require_signatures true
