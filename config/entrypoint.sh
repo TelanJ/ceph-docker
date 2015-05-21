@@ -12,7 +12,7 @@ if [ ! -n "$MON_IP" ]; then
 fi
 
 if [ ! -n "$CONFD_IP" ]; then
-  echo >&2 "ERROR: CONFD_IP must be defined as the IP address of the CONFD"
+  echo >&2 "ERROR: CONFD_IP must be defined as the IP address of the KV Store"
   exit 1
 fi
 
