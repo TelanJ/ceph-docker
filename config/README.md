@@ -16,7 +16,7 @@ The following strategy is applied:
 
 To bootstrap a new cluster run:
 
-`docker run -e kv_type=consul -e MON_IP=192.168.101.50 -e MON_NAME=mymon -e CLUSTER=testing -v /etc/ceph:/etc/ceph -v /path/to/ceph-docker/config/templates:/config ceph/config`
+`docker run -e MON_NAME=vagrant -e MON_IP=192.168.200.10 -e CONFD_IP=192.168.200.90 -e CONFD_PORT=8500 -e CONFD_BACKEND=consul -e kv_type=consul -e kv_port=8500 -v /etc/ceph:/etc/ceph -v /path/to/ceph-docker/config/templates/:/config ceph/config`
 
 This will generate:
 
