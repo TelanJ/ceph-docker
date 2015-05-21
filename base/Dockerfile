@@ -27,15 +27,6 @@ RUN apt-get update
 RUN apt-get install -y --force-yes ceph
 
 
-#Install Consul
-ADD https://dl.bintray.com/mitchellh/consul/0.5.1_linux_amd64.zip /tmp/consul.zip
-RUN unzip /tmp/consul.zip -d /usr/local/bin/
-RUN chmod +x /usr/local/bin/consul
-
-#Install ETCD
-RUN wget -q -O- "https://github.com/coreos/etcd/releases/download/${ETCDCTL_VERSION}/etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}.tar.gz" |tar xfz - -C/tmp/ etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}/etcdctl
-RUN mv /tmp/etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}/etcdctl /usr/local/bin/etcdctl
-
 #install consuloretcd-kv
 RUN wget -q -O- "http://github.com/AcalephStorage/consuloretcd-kv/releases/download/v0.2/consuloretcd-kv-v0.3.tar" | tar xvf - -C/tmp/ consuloretcd-kv
 RUN mv /tmp/consuloretcd-kv /usr/local/bin/consuloretcd
