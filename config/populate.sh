@@ -29,7 +29,7 @@ consuloretcd put -c osd/pool_default_min_size 1
 consuloretcd put -c osd/cluster_network 192.168.42.0/24
 consuloretcd put -c osd/public_network 192.168.42.0/24
 consuloretcd put -c osd/osd_mkfs_type xfs
-consuloretcd put -c osd/osd_mkfs_options_xfs -f -i size=2048
+consuloretcd put -c osd/osd_mkfs_options_xfs "-f -i size=2048"
 consuloretcd put -c osd/osd_mount_options_xfs noatime,largeio,inode,swalloc
 consuloretcd put -c osd/osd_mon_heartbeat_interval 30
 
