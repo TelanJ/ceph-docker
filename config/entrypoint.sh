@@ -46,14 +46,13 @@ done
 if consuloretcd get -${kv_type} ${CLUSTER_PATH}/done > /dev/null 2>%1 ; then
   echo "Configuration found for cluster ${CLUSTER}. Writing to disk."
 
-  consuloretcd get -${kv_type} ${CLUSTER_PATH}/ceph.conf > /etc/ceph/ceph.conf
-  consuloretcd get -${kv_type} ${CLUSTER_PATH}/ceph.mon.keyring > /etc/ceph/ceph.mon.keyring
-  consuloretcd get -${kv_type} ${CLUSTER_PATH}/ceph.client.admin.keyring > /etc/ceph/ceph.client.admin.keyring
+  consuloretcd -A ${CONFD_IP} get -${kv_type} ${CLUSTER_PATH}/ceph.conf > /etc/ceph/ceph.conf
+  consuloretcd -A ${CONFD_IP} get -${kv_type} ${CLUSTER_PATH}/ceph.mon.keyring > /etc/ceph/ceph.mon.keyring
+  consuloretcd -A ${CONFD_IP} get -${kv_type} ${CLUSTER_PATH}/ceph.client.admin.keyring > /etc/ceph/ceph.client.admin.keyring
 
   ceph mon getmap -o /etc/ceph/monmap
 else 
   echo "No configuration found for cluster ${CLUSTER}. Generating."
-
   export fsid=$(uuidgen)
   confd -onetime -backend ${CONFD_BACKEND} -node ${CONFD_IP}:8500
 
@@ -65,13 +64,13 @@ else
   export MONKEY=$(cat /etc/ceph/ceph.mon.keyring)
   export ADKEY=$(cat /etc/ceph/ceph.client.admin.keyring)
 
-  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.conf "$CEPHCONF"
-  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.mon.keyring "$MONKEY"
-  consuloretcd put -${kv_type} ${CLUSTER_PATH}/ceph.client.admin.keyring "$ADKEY"
+  consuloretcd -A ${CONFD_IP} put -${kv_type} ${CLUSTER_PATH}/ceph.conf "$CEPHCONF"
+  consuloretcd -A ${CONFD_IP} put -${kv_type} ${CLUSTER_PATH}/ceph.mon.keyring "$MONKEY"
+  consuloretcd -A ${CONFD_IP} put -${kv_type} ${CLUSTER_PATH}/ceph.client.admin.keyring "$ADKEY"
     
   echo "completed initialization for ${MON_NAME}"
-  consuloretcd put -${kv_type} ${CLUSTER_PATH}/done true > /dev/null 2>&1
+  consuloretcd -A ${CONFD_IP} put -${kv_type} ${CLUSTER_PATH}/done true > /dev/null 2>&1
 fi
 
-consuloretcd delete -${kv_type} ${CLUSTER_PATH}/lock > /dev/null 2>&1
+consuloretcd -A ${CONFD_IP} delete -${kv_type} ${CLUSTER_PATH}/lock > /dev/null 2>&1
 
